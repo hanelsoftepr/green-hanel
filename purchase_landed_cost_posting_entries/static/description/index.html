@@ -1,0 +1,87 @@
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">Purchase Cost Distribution</h2>
+        <h3 class="oe_slogan">Managing your purchase expenses</h3>
+        <div>
+            <p>
+                The functionality of this module is extended from <i>purchase_landed_cost</i> of Odoo MRP Team
+                to additionally provide a way to post to Journal Entries
+            </p>
+            <div class="oe_centeralign oe_websiteonly">
+                <a href="http://demo2.staginghosting.com:8069"
+                   class="oe_button oe_big oe_tacky">Start your <span class="oe_emph">free</span> trial</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="oe_row">
+        <h3>Main Features:</h3>
+        <div class="oe_span6">
+            <!--<p class='oe_mt32'>-->
+            <ul>
+                <li>Adding <i>amount_total</i> field to show total of expense amount</li>
+                <li>Defaulting Account Journal on Purchase Cost Distribution form to use in posting Journal Entries</li>
+                <li>Adding a expense type to compute by percentage.</li>
+                <li>Editing <i>_calculate_cost</i> function for each Picking Lines become more exactly</li>
+                <li>Posting expense amount to Journal Entries</li>
+                <li>Providing 2 ways to post JE in <b>Settings</b> > <b>Configurations</b> > <b>Purchases</b> > <b>Cost
+                    Distribution</b>,
+                    run in current transaction or run in background if there are so many Accounting Entries need to
+                    post.
+                </li>
+            </ul>
+
+            <!--</p>-->
+        </div>
+        <div class="oe_span6">
+            <div class="oe_demo oe_picture oe_screenshot">
+                <a href="http://hanelsofterp.com/page/phan-mem-quan-ly-va-hoach-dinh-san-xuat">
+                    <img src="main-image.png" alt="Go to Hanelsoft ERP">
+                </a>
+            </div>
+        </div>
+
+    </div>
+    <div class="oe_row">
+        <h3>Configurations:</h3>
+
+        <div class="oe_span6">
+            <div class="oe_demo oe_picture" style="border: none !important;">
+                <a href="http://hanelsofterp.com/page/phan-mem-quan-ly-va-hoach-dinh-san-xuat">
+                    <img src="Settings-icon.png" alt="Go to Hanelsoft ERP">
+                </a>
+            </div>
+        </div>
+        <div class="oe_span6">
+            <ul>
+                <li>Purchase Expense Type with calculate method is Percentage by PO line:
+                    On master form of Purchase Expense Type, choosing <b>Percentage by PO line</b>
+                    on <b>Calculate Method</b> field
+                </li>
+                <li>Default Journal: On master form of Journals, tick on <b>Default for Cost Distributions</b>.
+                    Tick on <b>Use for Cost Distributions</b> to restrict Journal can choose in PCD form
+                </li>
+                <li>Processed way to posting Journal Entries for PCD:
+                    <b>Settings</b> > <b>Configurations</b> > <b>Purchases</b>,
+                    tick on Run Cost Distribution in Background to run posting process in background,
+                    un-tick if you prefer posting process run in current transaction
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="oe_row">
+        <h3>Credits:</h3>
+        <ul>
+            <li><b>Nguyen Thi Thanh Tam, Tia</b> (Mrs.) &lt;tamntt@hanelsoft.vn&gt; - <i>Business Analyst</i></li>
+            <li><b>Tran Anh Dung, Alex (Mr.)</b> &lt;dungta2@hanelsoft.vn&gt; - <i>Developer</i></li>
+            <li>Hanelsoft ERP - NPP Team</li>
+        </ul>
+        <p>
+            <a href="http://hanelsofterp.com/page/phan-mem-quan-ly-va-hoach-dinh-san-xuat">
+                Contact us
+            </a> to get more infomation,<br/>
+            Thanks!
+        </p>
+    </div>
+</section>

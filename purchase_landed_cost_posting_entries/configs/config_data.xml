@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="npp_cost_distribution_config" model="ir.values">
+            <field name="value">False</field>
+            <field name="key">default</field>
+            <field name="name">default_distribution_background</field>
+            <field name="model">purchase.config.settings</field>
+        </record>
+
+        <record id="npp_purchase_config_for_cost_distribution" model="ir.ui.view">
+            <field name="name">NPP Purchase Config for Cost Distribution</field>
+            <field name="model">purchase.config.settings</field>
+            <field name="inherit_id" ref="purchase.view_purchase_configuration"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[3]" position="after">
+                    <!--<separator string="Purchase Cost Distribution"/>-->
+                    <group>
+                        <label for="id" string="Cost Distribution"/>
+                        <div>
+                            <field name="distribution_background" class="oe_inline"/>
+                            <label for="distribution_background"/>
+                        </div>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</openerp>

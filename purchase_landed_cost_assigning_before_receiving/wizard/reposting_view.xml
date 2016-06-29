@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        <record id="npp_reposting_account_entries_view" model="ir.ui.view">
+            <field name="name">npp.reposting.account.entries</field>
+            <field name="model">reposting.account.entries.wizard</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <field name="cost_distribution_id"/>
+                    </group>
+                    <footer>
+                        <button name="action_reporting_account_entries" string="Confirm" type="object"
+                                class="oe_highlight"
+                        />
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="npp_action_reposting_account_entries" model="ir.actions.act_window">
+            <field name="name">Repoting Account Entries</field>
+            <field name="res_model">reposting.account.entries.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="npp_reposting_account_entries_view"/>
+        </record>
+
+        <menuitem id="npp_menu_reposting_account_entries"
+                  parent="base.menu_custom"
+                  action="npp_action_reposting_account_entries"
+                  sequence="1"
+                  groups="base.group_no_one"
+        />
+
+    </data>
+</openerp>

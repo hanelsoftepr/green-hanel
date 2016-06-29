@@ -1,0 +1,131 @@
+<section class="oe_container">
+    <div class="oe_row oe_spaced">
+        <h2 class="oe_slogan">Purchase Cost Distribution</h2>
+        <h3 class="oe_slogan">Distributing Purchase Landed Cost Express</h3>
+        <div>
+            <p>
+                This module depends on
+                <a href="https://apps.odoo.com/apps/modules/8.0/purchase_landed_cost_posting_entries/">
+                    Purchase Landed Cost - Posting Entries
+                </a>
+                <i>(purchase_landed_cost_posting_entries)</i> changes workflow
+                of distributing purchased landed cost to assigning landed cost for <b>Incoming Shipment</b>
+                before receiving.
+
+            </p>
+            <p>
+                <strong>
+                    To understand about this module, please try
+                    <a href="https://apps.odoo.com/apps/modules/8.0/purchase_landed_cost_posting_entries/">
+                        Purchase Landed Cost - Posting Entries
+                    </a>
+                    first.
+                </strong>
+            </p>
+            <div class="oe_centeralign oe_websiteonly">
+                <a href="http://demo3.staginghosting.com:8069"
+                   class="oe_button oe_big oe_tacky">Start your <span class="oe_emph">free</span> trial</a>
+            </div>
+        </div>
+
+    </div>
+    <div class="oe_row">
+        <h3>Main Features:</h3>
+        <div>
+            <!--<p class='oe_mt32'>-->
+            <ul>
+                <li>Adding new field <b>Landed Cost</b> <i>(landed_cost)</i> on Purchase Order (PO). Use the field to
+                    mark a <b>Purchase Order</b> is required filling landed cost before receiving a <b>Incoming
+                        Shipment</b>.
+                </li>
+
+                <li>On Partner form too. Use it mark purchasing from this Partner have or not landed cost.
+                    When changing the Partner field on PO form, the event onchange will activate and change
+                    <b>Landed Cost</b> field on PO form follow <b>Landed Cost</b> of selected partner.
+                    However, the value of the field is still changeable.
+                </li>
+
+                <li>Changing workflow of Purchase Cost Distribution:
+                    <ol>
+                        <li>If PO has landed cost, PO's Incoming Shipment will be pending in <b>Waiting for Landed
+                            Cost</b> state until expense cost for it is imported. We have two ways to import landed
+                            cost, create <b>Purchase Cost Distribution</b> record then import this *Incoming Shipment*
+                            or filling expense cost in <b>Landed Cost</b> tab on Incoming Shipment form. The <b>Incoming
+                                Shipment</b> going to <b>Ready for Transfer</b> state, when finished importing landed
+                            cost.
+                        </li>
+                        <li>System going to automatically distribute landed cost for Purchase Order and update cost,
+                            when PO's Incoming Shipment received.
+                        </li>
+                    </ol>
+                </li>
+
+                <li>Providing function re-posting to accounting entries for purchase landed cost in case posting for
+                    landed cost in background fail
+                </li>
+            </ul>
+        </div>
+        <div>
+            <div class="oe_demo oe_picture oe_screenshot" style="max-height: none;">
+                <a href="http://hanelsofterp.com/page/phan-mem-quan-ly-va-hoach-dinh-san-xuat">
+                    <img src="main_image.png" alt="Go to Hanelsoft ERP">
+                </a>
+            </div>
+        </div>
+
+    </div>
+    <div class="oe_row">
+        <h3>New Workflow:</h3>
+        <div>
+            <ul>
+                <li>When user creates a PO, a check box "Landed Cost" will follow "Landed Cost" of Partner
+                    (If this shipment is not or required Landed Cost, user can un-tick/tick).
+                </li>
+
+                <li>With this module, we need to key in import expenses after PO confirmed and before receiving.
+                    Without Landed Cost Distribution, the Incoming Shipment will be pending in status Waiting for Landed
+                    Cost.
+                </li>
+
+                <li>Go to Purchase > Landed Cost > Purchase Cost Distribution > Click Create. Select the pickings to
+                    which you want to calculate landed costs. Select the account journal in which to post the landed
+                    costs. Once you select the pickings, the product lines will be added automatically in tab "Picking
+                    lines". In tab "Expense", key in Import Expenses and other expenses. Click “Calculate" to confirm.
+                </li>
+
+                <li>Now the incoming shipment becomes "Ready to Transfer".
+                    Upon Receiving, system will proceed the following actions:
+                    <ol>
+                        <li>Update Product Qty</li>
+                        <li>Create Journal Entries for PO Price</li>
+                        <li>Create Journal Entries for Import Expense</li>
+                    </ol>
+                    The Import Expenses will be deducted from the Expense account (which was defined in Expense Type )
+                    and transferred to the stock valuation account.
+                </li>
+
+                <!--<li>Update product cost: Calculation to update product cost:-->
+                    <!--(round up (Landed U.C x PO Qty) + current item cost x current qty on-hand) / (PO qty + current qty-->
+                    <!--on-hand)-->
+                <!--</li>-->
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="oe_row">
+        <h3>Credits:</h3>
+        <ul>
+            <li><b>Nguyen Thi Thanh Tam, Tia</b> (Mrs.) &lt;tamntt@hanelsoft.vn&gt; - <i>Business Analyst</i></li>
+            <li><b>Tran Anh Dung, Alex</b> (Mr.) &lt;dungta2@hanelsoft.vn&gt; - <i>Developer</i></li>
+            <li><b>Do Thi Quang, Quang</b> (Mrs.) &lt;quangdt@hanelsoft.vn&gt; - <i>Tester</i></li>
+            <li>Hanelsoft ERP - NPP Team</li>
+        </ul>
+        <p>
+            <a href="http://hanelsofterp.com/page/phan-mem-quan-ly-va-hoach-dinh-san-xuat">
+                Contact us
+            </a> to get more infomation,<br/>
+            Thanks!
+        </p>
+    </div>
+</section>

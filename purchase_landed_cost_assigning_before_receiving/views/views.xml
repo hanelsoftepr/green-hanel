@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+        <record id="npp_stock_picking_purchase_cost_distribution"
+                model="ir.ui.view">
+            <field name="name">npp.stock.picking.purchase.cost.distribution</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@string='Operations']" position="after">
+                    <page string="Landed Cost"
+                          attrs="{'invisible': [('landed_cost', '=', False)]}"> <!-- TODO: add groups for manage landed cost -->
+                        <field name="expense_ids" attrs="{'readonly': [('state', '=', 'done')]}">
+                            <tree editable="bottom">
+                                <field name="type"/>
+                                <field name="calculation_method"/>
+                                <field name="account_id"/>
+                                <field name="ref"/>
+                                <field name="expense_amount"
+                                       attrs="{'invisible': [('calculation_method', '=', 'percent')]}"/>
+                                <field name="expense_percent_amount"
+                                       attrs="{'invisible': [('calculation_method', '!=', 'percent')]}"/>
+                                <field name="imported_lines"
+                                       invisible="1"/>
+                                <field name="affected_lines"
+                                       widget="many2many_tags"/>
+                                <field name="invoice_line"
+                                       options="{'no_create': true, 'create_edit': false}"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page string="Cost Lines"
+                          attrs="{'invisible': [('cost_line_ids', '=', [])]}"> <!-- TODO: add groups for manage landed cost -->
+                        <field name="cost_line_ids">
+                            <tree string="Costs distribution picking lines" create="false" editable="top">
+                                <field name="picking_id"/>
+                                <field name="move_id"/>
+                                <field name="product_id" readonly="1"/>
+                                <field name="product_qty"/>
+                                <field name="product_price_unit"/>
+                                <field name="total_amount"/>
+                                <field name="expense_amount"/>
+                                <field name="cost_ratio"/>
+                                <field name="standard_price_old"/>
+                                <field name="standard_price_new"/>
+                                <field name="state"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='picking_type_id']" position="after">
+                    <field name="journal_id"/>
+                    <field name="distribution_id" invisible="1"/>
+                    <field name="landed_cost" invisible="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="npp_purchase_order_purchase_cost_distribution" model="ir.ui.view">
+            <field name="name">npp.purchase.order.purchase.cost.distribution</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='dest_address_id']" position="after">
+                    <!-- TODO: add group manage landed cost for PO -->
+                    <field name="landed_cost"
+                           attrs="{'readonly': [('state', 'in', ['confirmed', 'done', 'cancel', 'approved'])]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="npp_purchase_landed_cost_extend_form" model="ir.ui.view">
+            <field name="name">npp.purchase.landed.cost.extend</field>
+            <field name="model">purchase.cost.distribution</field>
+            <field name="inherit_id" ref="purchase_landed_cost.purchase_cost_distribution_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='cost_lines']//field[@name='standard_price_new']" position="after">
+                    <field name="state"/>
+                </xpath>
+                <xpath expr="//button[@string='Recalculate']" position="attributes">
+                    <attribute name="states">calculated,partially</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_done']" position="attributes">
+                    <attribute name="states">calculated,partially</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!--<record id="npp_purchase_cost_distribute_hidden_button_form_view" model="ir.ui.view">-->
+            <!--<field name="name">npp.purchase.cost.distribution.hidden</field>-->
+            <!--<field name="model">purchase.cost.distribution</field>-->
+            <!--<field name="inherit_id" ref="purchase_landed_cost.purchase_cost_distribution_form"/>-->
+            <!--<field name="arch" type="xml">-->
+                <!--<xpath expr="//button[@name='action_done']" position="attributes">-->
+                    <!--<attribute name="invisible">1</attribute>-->
+                <!--</xpath>-->
+            <!--</field>-->
+        <!--</record>-->
+
+    </data>
+</openerp>

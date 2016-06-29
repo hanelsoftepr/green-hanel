@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<openerp>
+    <data>
+        <record id="npp_purchase_cost_distribution_form_inherit" model="ir.ui.view">
+            <field name="name">npp.purchase.cost.distribution.form.inherit</field>
+            <field name="model">purchase.cost.distribution</field>
+            <field name="inherit_id" ref="purchase_landed_cost.purchase_cost_distribution_form"/>
+            <field name="arch" type="xml" >
+                <xpath expr="//field[@name='date']" position="after">
+                    <field name="account_journal_id"/>
+                </xpath>
+                <xpath expr="//field[@name='expense_lines']//field[@name='calculation_method']" position="after">
+                    <field name="account_id"/>
+                </xpath>
+                <xpath expr="//field[@name='expense_lines']//field[@name='expense_amount']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('calculation_method', '=', 'percent')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='expense_lines']//field[@name='expense_amount']" position="after">
+                    <field name="expense_percent_amount" attrs="{'invisible': [('calculation_method', '!=', 'percent')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="npp_purchase_expense_type_form_view" model="ir.ui.view">
+            <field name="name">npp.purchase.expense.type.form.view</field>
+            <field name="model">purchase.expense.type</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" translate="1"/>
+                                <field name="calculation_method"/>
+                                <label for="default_amount" attrs="{'invisible': [('calculation_method', '=', 'percent')]}"/>
+                                <div attrs="{'invisible': [('calculation_method', '=', 'percent')]}">
+                                    <field name="default_amount"/>
+                                </div>
+                                <label for="default_percent_amount" attrs="{'invisible': [('calculation_method', '!=', 'percent')]}"/>
+                                <div attrs="{'invisible': [('calculation_method', '!=', 'percent')]}">
+                                    <field name="default_percent_amount" class="oe_inline"/>
+                                    <label string=" %" style="position: relative; top: 2px"/>
+                                </div>
+                                <field name="default_account_id"/>
+                            </group>
+                            <group>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="note"/>
+                                <field name="default_expense"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="npp_account_journal_default_cost_distribution" model="ir.ui.view">
+            <field name="name">npp.account.journal.cost.distribution</field>
+            <field name="model">account.journal</field>
+            <field name="inherit_id" ref="account.view_account_journal_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='group_invoice_lines']" position="after">
+                    <field name="default_cost_distribution"/>
+                    <field name="use_cost_distribution"
+                           attrs="{'readonly': [('default_cost_distribution', '=', True)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</openerp>
