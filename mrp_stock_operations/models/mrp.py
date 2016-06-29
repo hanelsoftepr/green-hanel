@@ -57,20 +57,20 @@ class nppMrpProduction(models.Model):
             return [[], 0]
         quantModel = self.env['stock.quant']
         moveModel = self.env['stock.move']
-        quants0 = quantModel.with_context(for_move_id=move.id).quants_get_prefered_domain(
-                move.location_id, move.product_id, quantity,
+        quants0 = quantModel.with_context(for_move_id=move.id).quants_get_preferred_domain(
+                quantity, move, ops=False,
                 domain=[('reservation_id', '=', False), ('qty', '>', 0)],
-                prefered_domain_list=[], restrict_lot_id=move.restrict_lot_id.id,
-                restrict_partner_id=move.restrict_partner_id.id
+                lot_id=move.restrict_lot_id.id,
+                preferred_domain_list=[]
         )
         quantModel.quants_reserve(quants0, move)
         quantity = move.product_qty - move.reserved_availability
         if move.state == 'waiting':
             quantity -= sum([o.product_qty for o in move.move_orig_ids
                              if o.state not in ['cancel', 'done']])
-        removal_strategy = self.env['stock.location'].get_removal_strategy(location=False, product=move.product_id)
+        removal_strategy = self.env['stock.location'].get_removal_strategy(quantity, move, ops=False)
         quants = quantModel.apply_removal_strategy(
-            location=False, product=move.product_id, quantity=quantity,
+            quantity=quantity, move=move.product_id, ops=False,
             domain=[('location_id.usage', '=', 'internal'),
                     ('reservation_id', '=', False),
                     ('qty', '>', 0)],
@@ -230,9 +230,9 @@ class nppMrpProduction(models.Model):
         return result
 
     @api.model
-    def _make_consume_line_from_data(self, production, product, uom_id, qty, uos_id, uos_qty):
+    def _make_consume_line_from_data(self, production, product, uom_id, qty):
         move_id = super(nppMrpProduction, self)._make_consume_line_from_data(
-                production, product, uom_id, qty, uos_id, uos_qty
+                production, product, uom_id, qty
         )
         location_id = self.env.context.get('location_id', False)
         if location_id:

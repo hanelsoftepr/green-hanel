@@ -20,17 +20,11 @@
             <field name="model">mrp.config.settings</field>
             <field name="inherit_id" ref="mrp.view_mrp_config"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[2]/div[1]" position="inside">
-                    <div>
-                        <field name="auto_make_stock_operation" class="oe_inline"/>
-                        <label for="auto_make_stock_operation"/>
-                    </div>
-                    <div>
-                        <field name="auto_make_procurement"
-                               attrs="{'readonly':[('auto_make_stock_operation', '=', False)]}"
-                               class="oe_inline"/>
-                        <label for="auto_make_procurement"/>
-                    </div>
+                <xpath expr="//field[@name='module_mrp_operations']" position="after">
+
+                    <field name="auto_make_stock_operation" />
+                    <field name="auto_make_procurement"
+                           attrs="{'readonly':[('auto_make_stock_operation', '=', False)]}" />
                 </xpath>
             </field>
 

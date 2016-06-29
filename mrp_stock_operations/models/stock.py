@@ -104,9 +104,20 @@ class nppStockLocation(models.Model):
 
     @api.model
     def get_warehouse(self, location):
+        view_locations = {}
+        for _wh in self.env['stock.warehouse'].search([]):
+            view_locations[_wh.view_location_id.id] = _wh.id
         if isinstance(location, int):
             location = self.browse(location)
-        return super(nppStockLocation, self).get_warehouse(location)
+        wh = False
+        while location.id:
+            location = location.location_id
+            wh = view_locations.get(location.id, False)
+            if wh:
+                break
+        return wh
+
+        # return super(nppStockLocation, self).get_warehouse(location)
 
     @api.multi
     def get_view_location_warehouse(self):
@@ -180,25 +191,27 @@ class NppStockQuant(models.Model):
     _inherit = 'stock.quant'
 
     @api.model
-    def _quants_get_order(self, location, product, quantity, domain=[], orderby='in_date'):
+    def _quants_get_order(self, quantity, move, ops=False, domain=[], orderby='in_date'):
         """ Override odoo base function in module: stock
 
         """
         params = {
-            'location': location,
-            'product': product,
             'quantity': quantity,
+            'move': move,
+            'ops': ops,
             'domain': domain,
             'orderby': orderby
         }
-        if location:
+        if move._name == 'stock.move':
             return super(NppStockQuant, self)._quants_get_order(**params)
         else:
-            del params['location']
+            del params['move']
+            del params['ops']
+            params['product'] = move
             return self._quants_get_order_all_locations(**params)
 
     @api.model
-    def _quants_get_order_all_locations(self, product, quantity, domain=[], orderby='in_date'):
+    def _quants_get_order_all_locations(self, quantity, product, domain=[], orderby='in_date'):
         domain += [('product_id', '=', product.id)]
         if self.env.context.get('force_company'):
             domain += [('company_id', '=', self.env.context.get('force_company'))]
