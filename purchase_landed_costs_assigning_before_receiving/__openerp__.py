@@ -7,7 +7,7 @@
     """,
     'author': "Hanel Software Solutions",
     'website': 'http://www.hanelsoft.vn/',
-    'depends': ['purchase_landed_cost_posting_entries'],
+    'depends': ['purchase_landed_costs_posting_entries'],
     'data': ['views/views.xml',
              'views/res_partner_view.xml',
              'wizard/reposting_view.xml'],
