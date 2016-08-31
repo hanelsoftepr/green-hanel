@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="gantt_multiple_groupby" name="NPP Web Gantt Multiple group by" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/web_gantt_multiple_groupby/static/src/js/gantt_view.js"/>
+            </xpath>
+        </template>
+
+        <template id="lib_gantt_extend" name="gantt lib" inherit_id="web_gantt.assets_backend">
+            <xpath expr="//script[@src='/web_gantt/static/lib/dhtmlxGantt/sources/dhtmlxgantt.js']" position="after">
+                <script type="text/javascript"
+                        src="/web_gantt_multiple_groupby/static/lib/Dhtmlxgantt-extend/DhtmlXGantt.js"/>
+            </xpath>
+        </template>
+    </data>
+</openerp>
