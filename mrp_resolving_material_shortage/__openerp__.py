@@ -15,7 +15,7 @@
              'configs/mrp_config_data.xml'
              ],
     'installable': True,
-    'price': 25.00,
+    'price': 80.00,
     'currency': 'EUR',
     'auto_install': False,
     'application': False,
