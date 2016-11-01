@@ -8,32 +8,32 @@ class NppMrpConfigSettings(models.Model):
 
     @api.model
     def get_default_auto_make_stock_operation(self, fields):
-        value = eval(self.env.ref('mrp_stock_operations.npp_default_auto_make_stock_operation_value').value)
+        value = eval(self.env.ref('mrp_resolving_material_shortage.npp_default_auto_make_stock_operation_value').value)
         return {'auto_make_stock_operation': value}
 
     @api.model
     def get_auto_make_stock_operation(self):
-        return eval(self.env.ref('mrp_stock_operations.npp_default_auto_make_stock_operation_value').value)
+        return eval(self.env.ref('mrp_resolving_material_shortage.npp_default_auto_make_stock_operation_value').value)
 
     @api.multi
     def set_auto_make_stock_operation(self):
         self.ensure_one()
-        self.env.ref('mrp_stock_operations.npp_default_auto_make_stock_operation_value').write({
+        self.env.ref('mrp_resolving_material_shortage.npp_default_auto_make_stock_operation_value').write({
             'value': str(self.auto_make_stock_operation)
         })
         if not self.auto_make_stock_operation:
-            self.env.ref('mrp_stock_operations.npp_default_auto_make_procurement_value').write({
+            self.env.ref('mrp_resolving_material_shortage.npp_default_auto_make_procurement_value').write({
                 'value': 'False'
             })
 
     @api.model
     def get_default_auto_make_procurement(self, fields):
-        value = eval(self.env.ref('mrp_stock_operations.npp_default_auto_make_procurement_value').value)
+        value = eval(self.env.ref('mrp_resolving_material_shortage.npp_default_auto_make_procurement_value').value)
         return {'auto_make_procurement': value}
 
     @api.model
     def get_auto_make_procurement(self):
-        return eval(self.env.ref('mrp_stock_operations.npp_default_auto_make_procurement_value').value)
+        return eval(self.env.ref('mrp_resolving_material_shortage.npp_default_auto_make_procurement_value').value)
 
     @api.multi
     def set_auto_make_procurement(self):

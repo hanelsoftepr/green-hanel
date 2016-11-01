@@ -9,9 +9,7 @@
     'author': "Hanel Software Solutions",
     'website': 'http://www.hanelsoft.vn/',
     'depends': ['mrp'],
-    'data': ['views/product_view.xml',
-             'views/mrp_view.xml',
-             'views/stock_view.xml',
+    'data': ['views/mrp_view.xml',
              'configs/mrp_config_data.xml'
              ],
     'installable': True,
