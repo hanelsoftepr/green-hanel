@@ -38,7 +38,7 @@ class NppMrpConfigSettings(models.Model):
     @api.multi
     def set_auto_make_procurement(self):
         self.ensure_one()
-        self.env.ref('mrp_stock_operations.npp_default_auto_make_procurement_value').write({
+        self.env.ref('mrp_resolving_material_shortage.npp_default_auto_make_procurement_value').write({
             'value': str(self.auto_make_procurement)
         })
 
