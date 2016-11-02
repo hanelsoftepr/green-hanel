@@ -57,7 +57,7 @@ class nppStockMove(models.Model):
         if qty:
             result.update(
                 product_qty=qty,
-                product_uos_qty=(move.product_uos and move.product_uos_qty) or qty,
+                # product_uos_qty=(move.product_uos and move.product_uos_qty) or qty,
                 order_production_id=order_production_id
             )
         return result
