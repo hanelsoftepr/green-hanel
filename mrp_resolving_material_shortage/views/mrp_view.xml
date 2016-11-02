@@ -24,17 +24,15 @@
                         <field name="picking_count"
                                widget="statinfo"
                                string="Stock Operations"/>
-                    </button>
+                        </button>
+                        <button class="oe_inline oe_stat_button" name="action_view_procurements"
+                        icon="fa-truck" type="object" attrs="{'invisible': [('procurement_count', '=', 0)]}">
+                        <field name="procurement_count"
+                               widget="statinfo"
+                               string="Procurement Orders"/>
+                        </button>
                     </div>
                 </div>
-                <!--<div name="buttons" position="inside">-->
-                    <!--<button class="oe_inline oe_stat_button" name="action_view_pickings"-->
-                        <!--icon="fa-tasks" type="object" >-->
-                        <!--<field name="picking_count"-->
-                               <!--widget="statinfo"-->
-                               <!--string="Stock Operations"/>-->
-                    <!--</button>-->
-                <!--</div>-->
             </field>
         </record>
 

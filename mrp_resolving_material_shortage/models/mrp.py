@@ -14,6 +14,12 @@ class nppMrpProduction(models.Model):
         for r in self:
             r.picking_count = len(r.picking_ids)
 
+    @api.multi
+    @api.depends('server_procurement_ids')
+    def _get_procurement_count(self):
+        for r in self:
+            r.procurement_count = len(r.server_procurement_ids)
+
     picking_ids = fields.One2many(comodel_name='stock.picking',
                                   inverse_name='production_id',
                                   string='Pickings')
@@ -22,6 +28,7 @@ class nppMrpProduction(models.Model):
     server_procurement_ids = fields.One2many(comodel_name='procurement.order',
                                              inverse_name='order_production_id',
                                              string='Procurements')
+    procurement_count = fields.Integer(string='Number of Procurement', compute='_get_procurement_count')
 
     @api.model
     def _make_production_produce_line(self, production):
@@ -255,19 +262,32 @@ class nppMrpProduction(models.Model):
             'res_model': 'stock.picking',
             'view_type': 'form',
             'views': [(False, 'tree'), (False, 'form')],
-            'domain': [('id', 'in', [p.id for p in self.picking_ids])],
+            'domain': [('id', 'in', self.picking_ids.ids)],
+        }
+
+    @api.multi
+    def action_view_procurements(self):
+        self.ensure_one()
+        return {
+            'name': 'Procurement Orders',
+            'type': 'ir.actions.act_window',
+            'res_model': 'procurement.order',
+            'view_type': 'form',
+            'views': [(False, 'tree'), (False, 'form')],
+            'domain': [('id', 'in', self.server_procurement_ids.ids)],
         }
 
     @api.multi
     def action_cancel(self):
         # Todo: If MO is cancelled, all Stock Operations for this MO will be cancel
         for production in self:
-            for move in production.move_created_ids:
-                if move.quant_keep_ids:
-                    move.quant_keep_ids.unlink()
+
             self.env['stock.picking'].browse(
                 [p.id for p in production.picking_ids if p.state not in ('cancel', 'done')]
             ).action_cancel()
+            self.env['procurement.order'].browse(
+                [p.id for p in production.server_procurement_ids if p.state not in ('done', 'cancel')]
+            ).cancel()
 
         res = super(nppMrpProduction, self).action_cancel()
         return res

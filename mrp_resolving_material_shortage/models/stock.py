@@ -46,7 +46,7 @@ class nppStockMove(models.Model):
     @api.multi
     def action_done(self):
         result = super(nppStockMove, self).action_done()
-        self._trigger_assign_production()
+        # self._trigger_assign_production()
         return result
 
     @api.model
@@ -62,38 +62,9 @@ class nppStockMove(models.Model):
             )
         return result
 
-    @api.cr_uid_ids_context
-    def do_unreserve(self, cr, uid, move_ids, context=None):
-        result = super(nppStockMove, self).do_unreserve(cr, uid, move_ids, context=context)
-        to_recheck_availability = []
-        for move in self.browse(cr, uid, move_ids, context):
-            if move.state in ('confirmed', 'waiting') and move.raw_material_production_id.id:
-                to_recheck_availability.append(move.raw_material_production_id.id)
-        production_ids = list(set(to_recheck_availability))
-        production_model = self.pool.get('mrp.production')
-        # production_model.button_unreserve(cr, uid, production_ids, context=context)
-        production_model.action_assign(cr, uid, production_ids, context=context)
-        return result
-
 
 class nppStockLocation(models.Model):
     _inherit = 'stock.location'
-
-    # @api.multi
-    # def _get_available_qty(self):
-    #     product_id = self.env['product.product'].browse(
-    #         self.env.context.get('product_id', False))
-    #     for loc in self:
-    #         if product_id.id:
-    #             loc.available_qty = product_id.with_context(
-    #                 location=loc.id
-    #             ).qty_usable
-    #         else:
-    #             loc.available_qty = None
-    #
-    # available_qty = fields.Float(string='Available Quantity',
-    #                              compute='_get_available_qty',
-    #                              digits=dp.get_precision('Product Unit of Measure'))
 
     @api.model
     def get_top_parent(self, location):
@@ -104,20 +75,9 @@ class nppStockLocation(models.Model):
 
     @api.model
     def get_warehouse(self, location):
-        view_locations = {}
-        for _wh in self.env['stock.warehouse'].search([]):
-            view_locations[_wh.view_location_id.id] = _wh.id
         if isinstance(location, int):
             location = self.browse(location)
-        wh = False
-        while location.id:
-            location = location.location_id
-            wh = view_locations.get(location.id, False)
-            if wh:
-                break
-        return wh
-
-        # return super(nppStockLocation, self).get_warehouse(location)
+        return super(nppStockLocation, self).get_warehouse(location)
 
     @api.multi
     def get_view_location_warehouse(self):
@@ -155,6 +115,19 @@ class nppStockPicking(models.Model):
                 picking.production_id.action_assign()
         return result
 
+    @api.multi
+    def do_transfer(self):
+        stock_operations = self.browse([])
+        normal_picking = self.browse([])
+        for r in self:
+            if r.production_id.id:
+                stock_operations |= r
+            else:
+                normal_picking |= r
+        super(nppStockPicking, stock_operations.with_context(__STOCK_OPERATIONS__=True)).do_transfer()
+        super(nppStockPicking, normal_picking).do_transfer()
+        return True
+
     @api.model
     def _create_backorder(self, picking, backorder_moves=[]):
         backorder_id = super(
@@ -191,6 +164,24 @@ class NppStockQuant(models.Model):
     _inherit = 'stock.quant'
 
     @api.model
+    def quants_get_preferred_domain(self, qty, move, ops=False, lot_id=False, domain=None, preferred_domain_list=[]):
+        if move.raw_material_production_id.id and self.env.context.get('__STOCK_OPERATIONS__', False):
+            i = 0
+            while True:
+                if i >= len(domain):
+                    break
+                if 'history_ids' in domain[i]:
+                    _tmp = domain.pop(i)
+                    preferred_domain_list.append([_tmp])
+                    break
+                i += 1
+            free_domain = [('reservation_id', '=', False)]
+            preferred_domain_list.append(free_domain)
+        return super(NppStockQuant, self).quants_get_preferred_domain(
+            qty=qty, move=move, ops=ops, lot_id=lot_id, domain=domain, preferred_domain_list=preferred_domain_list
+        )
+
+    @api.model
     def _quants_get_order(self, quantity, move, ops=False, domain=[], orderby='in_date'):
         """ Override odoo base function in module: stock
 
@@ -221,19 +212,13 @@ class NppStockQuant(models.Model):
         offset = 0
         while float_compare(quantity, 0, precision_rounding=product.uom_id.rounding) > 0:
             quants = self.search(domain, order=orderby, limit=10, offset=offset)
-            # for quant in quants:
-            #     location_id = quant.location_id.id
-            #     if location_id not in _location_usable_cache:
-            #         _location_usable_cache[location_id] = product.with_context(
-            #             location=location_id
-            #         ).qty_usable
 
             if not quants:
                 res.append((None, quantity))
                 break
             for quant in quants:
                 rounding = product.uom_id.rounding
-                apply_qty = quant.qty
+                apply_qty = min(quantity, quant.qty)
                 if float_compare(value1=apply_qty, value2=0, precision_rounding=rounding) <= 0:
                     continue
                 res += [(quant, apply_qty)]

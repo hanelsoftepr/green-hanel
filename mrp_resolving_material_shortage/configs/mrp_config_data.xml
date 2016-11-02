@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-    <data>
+    <data noupdate="1">
         <record id="npp_default_auto_make_stock_operation_value" model="ir.values">
             <field name="name">auto_make_stock_operation</field>
             <field name="model">mrp.config.settings</field>
@@ -14,6 +14,8 @@
             <field name="value">False</field>
             <field name="key">default</field>
         </record>
+    </data>
+    <data>
 
         <record id="npp_mrp_config_settings_view_inherit" model="ir.ui.view">
             <field name="name">npp.mrp.config.settings.view.inherit</field>

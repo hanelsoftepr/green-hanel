@@ -8,13 +8,13 @@
     """,
     'author': "Hanel Software Solutions",
     'website': 'http://www.hanelsoft.vn/',
-    'depends': ['mrp'],
+    'depends': ['mrp', 'purchase'],
     'data': ['views/mrp_view.xml',
              'configs/mrp_config_data.xml'
              ],
     'installable': True,
     'price': 120,
-    'currency': 'EUR',
+    'currency': 'USD',
     'auto_install': False,
     'application': False,
 }
