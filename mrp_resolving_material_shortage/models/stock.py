@@ -124,8 +124,10 @@ class nppStockPicking(models.Model):
                 stock_operations |= r
             else:
                 normal_picking |= r
-        super(nppStockPicking, stock_operations.with_context(__STOCK_OPERATIONS__=True)).do_transfer()
-        super(nppStockPicking, normal_picking).do_transfer()
+        if stock_operations.ids:
+            super(nppStockPicking, stock_operations.with_context(__STOCK_OPERATIONS__=True)).do_transfer()
+        if normal_picking.ids:
+            super(nppStockPicking, normal_picking).do_transfer()
         return True
 
     @api.model
