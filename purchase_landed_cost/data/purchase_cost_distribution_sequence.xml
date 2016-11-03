@@ -2,10 +2,10 @@
 <openerp>
     <data noupdate="1">
         <!-- Sequences for purchase cost distribution -->
-        <record id="seq_type_purchase_cost_distribution" model="ir.sequence.type">
-            <field name="name">Purchase cost distribution</field>
-            <field name="code">purchase.cost.distribution</field>
-        </record>
+        <!--<record id="seq_type_purchase_cost_distribution" model="ir.sequence.type">-->
+            <!--<field name="name">Purchase cost distribution</field>-->
+            <!--<field name="code">purchase.cost.distribution</field>-->
+        <!--</record>-->
         <record id="seq_purchase_cost_distribution" model="ir.sequence">
             <field name="name">Purchase cost distribution</field>
             <field name="code">purchase.cost.distribution</field>

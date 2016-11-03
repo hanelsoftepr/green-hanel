@@ -20,12 +20,11 @@ To-do:
 ------
 * Ability to add expenses in multi currency.
 * Purchase distribution report.
+* Allow expense type is percentage by weight, quantity, amount, ...
+* Posting Journal Entries
 
 Contributors:
 -------------
 * Joaquín Gutierrez <joaquing.pedrosa@gmail.com>
 * Pedro M. Baeza <pedro.baeza@serviciosbaeza.com>
-
-Icon:
------
-Thanks to Visual Pharm http://icons8.com
+* Tran Anh Dung, Alex <dungta2@hanelsoft.vn>

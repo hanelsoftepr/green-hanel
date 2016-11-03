@@ -23,13 +23,14 @@
 
 {
     'name': 'Purchase landed costs - Alternative option',
-    'version': '1.0',
+    'version': '2.0',
     "author": "OdooMRP team,"
               "AvanzOSC,"
               "Serv. Tecnol. Avanzados - Pedro M. Baeza,"
-              "Joaquín Gutierrez",
+              "Joaquín Gutierrez,"
+              "Hanel Software Solutions",
     'category': 'Purchase Management',
-    'website': 'http://www.gutierrezweb.es,http://www.odoomrp.com',
+    'website': 'http://www.gutierrezweb.es,http://www.odoomrp.com,http://hanelsofterp.com',
     'summary': 'Purchase cost distribution',
     'depends': [
         'stock',
@@ -46,7 +47,9 @@
         'security/purchase_landed_cost_security.xml',
         'security/ir.model.access.csv',
     ],
-    'installable': False,
+    'installable': True,
+    'price': 50.0,
+    'currency': 'EUR',
     'images': [
         '/static/description/images/purchase_order_expense_main.png',
         '/static/description/images/purchase_order_expense_line.png',

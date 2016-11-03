@@ -37,7 +37,7 @@ class PurchaseExpenseType(models.Model):
          ('price', 'By product price'),
          ('qty', 'By product quantity'),
          ('weight', 'By product weight'),
-         ('weight_net', 'By product weight net'),
+         # ('weight_net', 'By product weight net'),
          ('volume', 'By product volume'),
          ('equal', 'Equally to all lines')], string='Calculation method',
         default='amount')
