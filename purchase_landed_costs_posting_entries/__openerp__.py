@@ -10,7 +10,7 @@
     'website': 'http://www.hanelsoft.vn/',
     'depends': ['purchase_landed_cost'],
     'data': ['views/views.xml', 'configs/config_data.xml'],
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': False,
     'price': 119.00,

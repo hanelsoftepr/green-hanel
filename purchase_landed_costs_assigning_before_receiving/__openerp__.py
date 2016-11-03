@@ -13,7 +13,7 @@
              'wizard/reposting_view.xml'],
     'price': 79.50,
     'currency': 'EUR',
-    'installable': True,
+    'installable': False,
     'auto_install': False,
     'application': False,
 }
