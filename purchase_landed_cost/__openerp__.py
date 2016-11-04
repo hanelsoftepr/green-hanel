@@ -22,7 +22,7 @@
 
 
 {
-    'name': 'Purchase landed costs - Alternative option',
+    'name': 'Purchase landed costs - Improved Version',
     'version': '2.0',
     "author": "OdooMRP team,"
               "AvanzOSC,"
