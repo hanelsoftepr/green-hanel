@@ -39,6 +39,8 @@ class nppPurchaseCostDistribution(models.Model):
         _default_journal = self.env['account.journal'].search([('default_cost_distribution', '=', True)], limit=1)
         if _default_journal:
             return _default_journal
+        else:
+            return self.env['account.journal'].browse([])
 
     account_journal_id = fields.Many2one(
         comodel_name='account.journal', string='Journal', required=True,
@@ -50,7 +52,7 @@ class nppPurchaseCostDistribution(models.Model):
     def _get_account_move_vals(self):
         return {
             'journal_id': self.account_journal_id.id,
-            'period_id': self.env['account.period'].find(self.date)[0].id,
+            # 'period_id': self.env['account.period'].find(self.date)[0].id,
             'date': self.date,
             'ref': 'PCD:' + self.name
         }
@@ -77,7 +79,7 @@ class nppPurchaseCostDistribution(models.Model):
         debit_account_id = accounts['debit_account']
         credit_account_id = accounts['credit_account']
         already_out_account_id = accounts['out_account']
-        amlModel = self.env['account.move.line']
+        amlModel = self.env['account.move.line'].with_context(check_move_validity=False)
         base_line = {
             'name': line.product_id.name,
             'origin':
@@ -142,20 +144,20 @@ class nppPurchaseCostDistribution(models.Model):
 
     @api.multi
     def _create_accounting_entries(self, move_id, line):
-        accounts = self.env['product.template']\
-            .get_product_accounts(line.product_id.product_tmpl_id.id)
-        debit_account_id = accounts['property_stock_valuation_account_id']
-        already_out_account_id = accounts['stock_account_output']
-        credit_account_id = line.product_id.property_account_expense.id \
-            or line.product_id.categ_id.property_account_expense_categ.id
+        accounts = self.env['product.template'].browse(
+            line.product_id.product_tmpl_id.id).get_product_accounts()
+        debit_account_id = accounts['stock_valuation']
+        already_out_account_id = accounts['stock_output']
+        credit_account_id = line.product_id.property_account_expense_id.id \
+            or line.product_id.categ_id.property_account_expense_categ_id.id
         if not debit_account_id:
             raise ValidationError('Valuation Account or Expense Account is not set.')
         accounts = {}
         accounts.clear()
         accounts.update(
             credit_account=credit_account_id,
-            debit_account=debit_account_id,
-            out_account=already_out_account_id
+            debit_account=debit_account_id.id,
+            out_account=already_out_account_id.id
         )
         qty_out = self._get_quantity_out(line)
 

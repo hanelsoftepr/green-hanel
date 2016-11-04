@@ -13,7 +13,7 @@
             <field name="model">purchase.config.settings</field>
             <field name="inherit_id" ref="purchase.view_purchase_configuration"/>
             <field name="arch" type="xml">
-                <xpath expr="//group[3]" position="after">
+                <xpath expr="//group[2]" position="after">
                     <!--<separator string="Purchase Cost Distribution"/>-->
                     <group>
                         <label for="id" string="Cost Distribution"/>
