@@ -2,7 +2,7 @@
     'name': 'Purchase Landed Cost - Assigning before Receiving',
     'summary': 'Assigning Purchase Landed Cost for Incoming Shipment before receiving',
     'version': '1.0',
-    'category': 'Purchase',
+    'category': 'Purchase Management',
     'description': """
     """,
     'author': "Hanel Software Solutions",
