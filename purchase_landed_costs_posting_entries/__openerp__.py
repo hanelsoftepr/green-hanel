@@ -2,7 +2,7 @@
     'name': 'Purchase Landed Cost - Posting Entries',
     'summary': 'Posting purchase landed cost to accounting entries',
     'version': '1.0',
-    'category': 'Purchase',
+    'category': 'Purchase Management',
     'description': """
         Posting purchase landed cost to accounting entries
     """,
