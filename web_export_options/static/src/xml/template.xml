@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates id="templates" xml:space="preserve">
+    <table t-extend="ExportTreeView">
+        <t t-jquery="select#import_compat > option:eq(1)" t-operation="after">
+            <option value="flexible">Export Flexible Data</option>
+        </t>
+    </table>
+</templates>

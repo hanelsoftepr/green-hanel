@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <template id="web_export_options_js" name="Web Export Options" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <script type="text/javascript" src="/web_export_options/static/src/js/data_export.js"/>
+            </xpath>
+        </template>
+    </data>
+</openerp>
