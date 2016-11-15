@@ -12,10 +12,10 @@ def _commonCalculateQty(cls, production=False, moves=False):
         if move.state not in ('assigned', 'confirmed', 'waiting'):
             continue
         product_id = move.product_id.id
-        quants = quantModel.quants_get_prefered_domain(
-                move.location_id, move.product_id, move.product_qty,
+        quants = quantModel.quants_get_preferred_domain(
+                move.product_qty, move,
                 domain=[('qty', '>', 0.0), ('reservation_id', '=', move.id)],
-                prefered_domain_list=[]
+                preferred_domain_list=[]
             )
         # quants = move.reserved_quant_ids
         if product_id not in toConsumeDetails:
@@ -32,9 +32,9 @@ def _commonCalculateQty(cls, production=False, moves=False):
     result = []
     for product_id in toConsumeDetails:
         for lotID in toConsumeDetails[product_id]:
-            result.append({
+            result.append((0, 0, {
                 'product_id': product_id,
                 'lot_id': lotID,
                 'product_qty': toConsumeDetails[product_id][lotID]
-            })
+            }))
     return result

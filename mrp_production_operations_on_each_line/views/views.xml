@@ -1,6 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+        <record id="mrp_production_consume_details" model="ir.ui.view">
+            <field name="name">MRP Production Consume Details</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[1]/group[1]/group[2]" position="after">
+                    <div name="functional_button" class="oe_right oe_button_box">
+                        <button name="action_open_consume_details" class="oe_inline oe_stat_button"
+                                icon="fa-cogs" type="object" string="Consume Wizard"
+                                attrs="{'invisible': [('state', 'not in', ['confirmed', 'ready', 'in_production'])]}"/>
+                        <button name="action_open_force_details" class="oe_inline oe_stat_button"
+                                icon="fa-paper-plane" type="object" string="Force Reservation"
+                                attrs="{'invisible': [('show_force_reservation', '=', False)]}"/>
+                        <button name="action_open_reverse_details" class="oe_inline oe_stat_button"
+                                icon="fa-refresh" type="object" string="Reversed Wizard"
+                                attrs="{'invisible': [('state', 'not in', ['in_production', 'done'])]}"/>
+                    </div>
+                </xpath>
+                <xpath expr="//button[@name='force_production']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('show_force_reservation', '=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//button[@name='%(mrp.act_mrp_product_produce)d']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('show_produce', '=', False)]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='location_dest_id']" position="after">
+                    <field name="show_force_reservation" invisible="1"/>
+                    <field name="show_produce" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='move_lines']//field[@name='state']" position="after">
+                    <button name="force_assign" string="Force Reservation" icon="fa-paper-plane"
+                            type="object" states="confirmed,waiting"/>
+                </xpath>
+                <xpath expr="//field[@name='move_lines']//field[@name='product_id']" position="before">
+                    <button name="action_open_unconsume_wizard" string="Un-consume" icon="gtk-go-back"
+                            type="object" states="done"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="mrp_production_consume_wizard_form_view" model="ir.ui.view">
+            <field name="name">mrp.production.consume.wizard.view</field>
+            <field name="model">mrp.production.wizard.consume</field>
+            <field name="arch" type="xml">
+                <form>
+                    <field name="consume_lines">
+                        <tree editable="bottom">
+                            <field name="product_id"/>
+                            <field name="product_qty"/>
+                            <field name="lot_id" domain="[('product_id', '=', product_id)]"
+                                   groups="stock.group_production_lot" context="{'default_product_id': product_id}"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="action_do_consume" string="Confirm" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="mrp_production_force_reserve_wizard_form_view" model="ir.ui.view">
+            <field name="name">mrp.production.force_reserve.wizard.view</field>
+            <field name="model">mrp.production.wizard.force_availability</field>
+            <field name="arch" type="xml">
+                <form>
+                    <field name="force_lines">
+                        <tree editable="bottom">
+                            <field name="product_id" readonly="1"/>
+                            <field name="product_qty"/>
+                            <field name="reserved_qty"/>
+                            <field name="remaining_qty" invisible="1"/>
+                            <field name="force_qty" readonly="1"/>
+                            <field name="lot_id" domain="[('product_id', '=', product_id)]"
+                                   groups="stock.group_production_lot" context="{'default_product_id': product_id}"/>
+                            <field name="move_id" invisible="1"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="action_do_force_reserve" string="Confirm" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="mrp_production_reversed_wizard_form_view" model="ir.ui.view">
+            <field name="name">MRP Production Reversed Wizard Form</field>
+            <field name="model">mrp.production.wizard.reverse</field>
+            <field name="arch" type="xml">
+                <form>
+                    <field name="reverse_lines">
+                        <tree editable="bottom">
+                            <field name="product_id" readonly="1"/>
+                            <field name="product_uom"/>
+                            <field name="consumed_qty"/>
+                            <field name="product_qty"/>
+                            <field name="location_id"/>
+                            <field name="restrict_lot_id" domain="[('product_id', '=', product_id)]"
+                                   groups="stock.group_production_lot" context="{'default_product_id': product_id}"/>
+                            <field name="move_id" invisible="1"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="action_do_unconsume" string="Confirm" type="object" class="oe_highlight"/>
+                        <button name="action_view_reversed_move"
+                                string="View Reversed Moves" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="stock_move_unconsume_wizard" model="ir.ui.view">
+            <field name="model">stock.move.unconsume</field>
+            <field name="name">Stock Move Un-consume Wizard</field>
+            <field name="arch" type="xml">
+                <form string="Un-consume Wizard">
+                    <group>
+                        <group>
+                            <field name="product_id" readonly="1"/>
+                            <field name="product_uom"/>
+                            <field name="consumed_qty" readonly="1"/>
+
+                            <field name="product_qty"/>
+                            <field name="location_id"/>
+                            <field name="restrict_lot_id" domain="[('product_id', '=', product_id)]"
+                                   groups="stock.group_production_lot" context="{'default_product_id': product_id}"/>
+                            <field name="move_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_do_unconsume" string="Ok" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+
+        </record>
+
+        <record id="stock_move_unconsume_tree_view" model="ir.ui.view">
+            <field name="name">Stock Move Un-consumed Tree</field>
+            <field name="model">stock.move</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="product_id"/>
+                    <field name="product_uom_qty"/>
+                    <field name="product_uom"/>
+                    <field name="location_dest_id"/>
+                    <field name="date"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
 
     </data>
 </openerp>

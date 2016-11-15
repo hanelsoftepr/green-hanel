@@ -263,6 +263,7 @@ class nppMrpProduction(models.Model):
             'view_type': 'form',
             'views': [(False, 'tree'), (False, 'form')],
             'domain': [('id', 'in', self.picking_ids.ids)],
+            # 'target': 'new',
         }
 
     @api.multi
@@ -274,7 +275,7 @@ class nppMrpProduction(models.Model):
             'res_model': 'procurement.order',
             'view_type': 'form',
             'views': [(False, 'tree'), (False, 'form')],
-            'domain': [('id', 'in', self.server_procurement_ids.ids)],
+            'domain': [('id', 'in', self.server_procurement_ids.ids)]
         }
 
     @api.multi
