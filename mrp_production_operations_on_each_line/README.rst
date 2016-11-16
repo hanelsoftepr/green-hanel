@@ -26,4 +26,4 @@ Tran Anh Dung, Alex <dungta2@hanelsoft.vn> - Developer.
 
 Contributors:
 -------------
-Thanks to HanelsoftERP - website: http://hanelsofterp.com
+Thanks to Angel Lozano <a.lozano@inelmatic.com> - http://www.inelmatic.com
