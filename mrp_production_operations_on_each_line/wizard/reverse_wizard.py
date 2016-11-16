@@ -21,15 +21,21 @@ class MRPProductionWizardReverse(models.TransientModel):
         if not self.env.context.get('active_model', '>"<') == 'mrp.production':
             return res
         production = self.env['mrp.production'].browse(self.env.context.get('active_id', []))
+        uom_obj = self.env['product.uom']
         if production:
+            unconsume_obj = self.env['stock.move.unconsume']
             res.update({
                 'reverse_lines': []
             })
             for move in production.move_lines2.filtered(lambda x: x.state == 'done'):
-                res['reverse_lines'].append((0, 0, {
+                consumed_qty = uom_obj._compute_qty_obj(
+                    move.product_id.uom_id, unconsume_obj._get_move_consumed_qty(move), move.product_uom)
+
+                res['reverse_lines'].append((0, False, {
                     'move_id': move.id,
                     'product_id': move.product_id.id,
-                    'product_qty': move.product_uom_qty,
+                    'product_qty': consumed_qty,
+                    'consumed_qty': consumed_qty,
                     'product_uom': move.product_uom.id,
                     'location_id': move.location_id.id
                 }))
@@ -66,16 +72,21 @@ class MRPProductionWizardReverse(models.TransientModel):
 class StockMoveUnconsume(models.TransientModel):
     _name = 'stock.move.unconsume'
 
+    @api.model
+    def _get_move_consumed_qty(self, move, restrict_lot_id=None):
+        quants = move.quant_ids.filtered(lambda x: x.qty > 0 and x.location_id.id == move.location_dest_id.id)
+        if restrict_lot_id:
+            quants = quants.filtered(lambda x: x.lot_id.id == restrict_lot_id)
+        qty = sum([quant.qty for quant in quants])
+        return qty
+
     @api.multi
     @api.depends('move_id', 'product_uom', 'restrict_lot_id')
     def _compute_consumed_qty(self):
         uom_model = self.env['product.uom']
         for w in self:
             move = w.move_id
-            quants = move.quant_ids.filtered(lambda x: x.qty > 0 and x.location_id.id == move.location_dest_id.id)
-            if w.restrict_lot_id.id:
-                quants = quants.filtered(lambda x: x.lot_id.id == w.restrict_lot_id.id)
-            qty = sum([quant.qty for quant in quants])
+            qty = self._get_move_consumed_qty(move, w.restrict_lot_id.id)
             w.consumed_base_uom_qty = qty
             w.consumed_qty = uom_model._compute_qty_obj(
                 move.product_id.uom_id, qty, w.product_uom
@@ -104,7 +115,8 @@ class StockMoveUnconsume(models.TransientModel):
             res.update({
                 'move_id': move.id,
                 'product_id': move.product_id.id,
-                'product_qty': move.product_uom_qty,
+                'product_qty': self.env['product.uom']._compute_qty_obj(
+                    move.product_id.uom_id, self._get_move_consumed_qty(move), move.product_uom),
                 'product_uom': move.product_uom.id,
                 'location_id': move.location_id.id,
                 'restrict_lot_id': move.restrict_lot_id.id
@@ -135,7 +147,8 @@ class StockMoveUnconsume(models.TransientModel):
                 'create_date': time_now,
                 'date': time_now,
                 'state': 'draft',
-                'consumed_move_id': move.id
+                'consumed_move_id': move.id,
+                'raw_material_production_id': False
             })
             reversed_move.action_confirm()
             reversed_move.action_reverse_done()

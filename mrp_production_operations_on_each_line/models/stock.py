@@ -42,10 +42,10 @@ class StockMoveExtend(models.Model):
         return {
             'name': 'Un-consume Wizard',
             'type': 'ir.actions.act_window',
-            'res_model': 'stock.move.force_reserve',
+            'res_model': 'stock.move.unconsume',
             'view_id': self.env.ref('mrp_production_operations_on_each_line'
                                     '.stock_move_unconsume_wizard').id,
             'view_type': 'form',
             'view_mode': 'form',
-            'target': 'current'
+            'target': 'new'
         }

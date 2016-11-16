@@ -15,7 +15,7 @@
                                 icon="fa-paper-plane" type="object" string="Force Reservation"
                                 attrs="{'invisible': [('show_force_reservation', '=', False)]}"/>
                         <button name="action_open_reverse_details" class="oe_inline oe_stat_button"
-                                icon="fa-refresh" type="object" string="Reversed Wizard"
+                                icon="fa-refresh" type="object" string="Reversal Wizard"
                                 attrs="{'invisible': [('state', 'not in', ['in_production', 'done'])]}"/>
                     </div>
                 </xpath>
@@ -33,8 +33,8 @@
                     <button name="force_assign" string="Force Reservation" icon="fa-paper-plane"
                             type="object" states="confirmed,waiting"/>
                 </xpath>
-                <xpath expr="//field[@name='move_lines']//field[@name='product_id']" position="before">
-                    <button name="action_open_unconsume_wizard" string="Un-consume" icon="gtk-go-back"
+                <xpath expr="//field[@name='move_lines2']//field[@name='state']" position="after">
+                    <button name="action_open_unconsume_wizard" string="Un-consume" icon="gtk-undo"
                             type="object" states="done"/>
                 </xpath>
             </field>
