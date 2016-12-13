@@ -77,7 +77,7 @@ class nppMrpProduction(models.Model):
                              if o.state not in ['cancel', 'done']])
         removal_strategy = self.env['stock.location'].get_removal_strategy(quantity, move, ops=False)
         quants = quantModel.apply_removal_strategy(
-            quantity=quantity, move=move.product_id, ops=False,
+            quantity, move=move.product_id, ops=False,
             domain=[('location_id.usage', '=', 'internal'),
                     ('reservation_id', '=', False),
                     ('qty', '>', 0)],
