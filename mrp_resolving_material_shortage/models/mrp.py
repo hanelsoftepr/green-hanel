@@ -54,9 +54,12 @@ class nppMrpProduction(models.Model):
         }
         return move_vals
 
-    def _create_prev_stock_move_for(self, move):
+    def _create_prev_stock_move_for(self, move, production):
         dp = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-        quantity = move.product_qty - move.reserved_availability
+        quantity = move.product_qty - move.reserved_availability - sum(
+            [p.product_qty for p in production.server_procurement_ids
+             if p.state == 'running' and p.product_id.id == move.product_id.id]
+        )
         if move.state == 'waiting':
             quantity -= sum([o.product_qty for o in move.move_orig_ids
                              if o.state not in ['cancel', 'done']])
@@ -71,10 +74,14 @@ class nppMrpProduction(models.Model):
                 preferred_domain_list=[]
         )
         quantModel.quants_reserve(quants0, move)
-        quantity = move.product_qty - move.reserved_availability
-        if move.state == 'waiting':
-            quantity -= sum([o.product_qty for o in move.move_orig_ids
-                             if o.state not in ['cancel', 'done']])
+        # quantity = move.product_qty - move.reserved_availability - sum(
+        #     [p.product_qty for p in production.server_procurement_ids
+        #      if p.state == 'running' and p.product_id.id == move.product_id.id]
+        # )
+        #
+        # if move.state == 'waiting':
+        #     quantity -= sum([o.product_qty for o in move.move_orig_ids
+        #                      if o.state not in ['cancel', 'done']])
         removal_strategy = self.env['stock.location'].get_removal_strategy(quantity, move, ops=False)
         quants = quantModel.apply_removal_strategy(
             quantity, move=move.product_id, ops=False,
@@ -187,7 +194,7 @@ class nppMrpProduction(models.Model):
             lambda x: x.state in ['confirmed', 'waiting']
         ):
 
-            prevMove, remaining_qty = self._create_prev_stock_move_for(move)
+            prevMove, remaining_qty = self._create_prev_stock_move_for(move, production)
             listPrevMove += prevMove
             if self.env['mrp.config.settings'].get_auto_make_procurement():
                 precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
@@ -220,7 +227,7 @@ class nppMrpProduction(models.Model):
         """Override action_assign in module mrp to push a context and call some function"""
         _waiting_available = []
         for prod in self:
-            if prod.state == 'confirmed':
+            if prod.state in ('confirmed', 'in_production'):
                 _waiting_available.append(prod.id)
             elif prod.state == 'ready':
                 if not prod.test_ready():
@@ -241,9 +248,12 @@ class nppMrpProduction(models.Model):
         move_id = super(nppMrpProduction, self)._make_consume_line_from_data(
                 production, product, uom_id, qty
         )
+        move = self.env['stock.move'].browse(move_id)
+        vals = {'name': production.name + ': ' + move.name}
         location_id = self.env.context.get('location_id', False)
         if location_id:
-            self.env['stock.move'].browse(move_id).write({'location_id': location_id})
+            vals.update({'location_id': location_id})
+        move.write(vals)
         return move_id
 
     @api.model

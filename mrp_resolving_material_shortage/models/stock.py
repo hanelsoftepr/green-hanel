@@ -177,7 +177,10 @@ class NppStockQuant(models.Model):
                     preferred_domain_list.append([_tmp])
                     break
                 i += 1
+            reserved_domain = [('reservation_id', '=', move.id)]
             free_domain = [('reservation_id', '=', False)]
+
+            preferred_domain_list.append(reserved_domain)
             preferred_domain_list.append(free_domain)
         return super(NppStockQuant, self).quants_get_preferred_domain(
             qty=qty, move=move, ops=ops, lot_id=lot_id, domain=domain, preferred_domain_list=preferred_domain_list

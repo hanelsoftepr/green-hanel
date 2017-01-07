@@ -22,6 +22,9 @@
                 <xpath expr="//button[@name='force_production']" position="attributes">
                     <attribute name="attrs">{'invisible': [('show_force_reservation', '=', False)]}</attribute>
                 </xpath>
+                <xpath expr="//button[@name='action_assign']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('show_force_reservation', '=', False)]}</attribute>
+                </xpath>
                 <xpath expr="//button[@name='%(mrp.act_mrp_product_produce)d']" position="attributes">
                     <attribute name="attrs">{'invisible': ['|', ('show_produce', '=', False)]}</attribute>
                 </xpath>
