@@ -163,6 +163,11 @@ class MRPProductionExtend(models.Model):
         """
         # stock_mov_obj = self.env['stock.move']
         production = self
+        if not main_production_move:
+            for produce_product in production.move_created_ids:
+                if produce_product.product_id.id == production.product_id.id:
+                    main_production_move = produce_product.id
+
         if precision is None:
             precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         if total_consume_moves is None:
