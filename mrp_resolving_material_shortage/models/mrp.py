@@ -54,6 +54,42 @@ class nppMrpProduction(models.Model):
         }
         return move_vals
 
+    @api.model
+    def _group_quants(self, quants):
+        location_model = self.env['stock.location']
+        _quant_groups = {}
+        for quant in quants:
+            if quant[0] is None:
+                _quant_groups[None] = quant[1]
+                continue
+            for key in _quant_groups:
+                parent = location_model.search(
+                    [('parent_left', '<=', min(key[0], quant[0].location_id.parent_left)),
+                     ('parent_right', '>=', max(key[1], quant[0].location_id.parent_right)),
+                     ('usage', '=', 'internal')],
+                    order='parent_left asc', limit=1
+                )
+                if parent:
+                    qty = _quant_groups.pop(key)
+                    _quant_groups[(parent.parent_left, parent.parent_right)] = qty + quant[1]
+                    break
+                else:
+                    continue
+            else:
+                _quant_groups[
+                    (quant[0].location_id.parent_left, quant[0].location_id.parent_right)] = quant[1]
+        result = {}
+        for key in _quant_groups:
+            if key is None:
+                result[None] = _quant_groups[None]
+                continue
+            location = location_model.search([('parent_left', '=', key[0]),
+                                              ('parent_right', '=', key[1])],
+                                             limit=1)
+            result[location.id] = _quant_groups[key]
+
+        return result
+
     def _create_prev_stock_move_for(self, move, production):
         dp = self.env['decimal.precision'].precision_get('Product Unit of Measure')
         quantity = move.product_qty - move.reserved_availability - sum(
@@ -93,14 +129,7 @@ class nppMrpProduction(models.Model):
 
         move_created = []
         remaining_qty = 0
-        quant_location = {}
-        for quant in quants:
-            if quant[0] is None:
-                quant_location[None] = quant[1]
-            elif quant[0].location_id.id in quant_location:
-                quant_location[quant[0].location_id.id] += quant[1]
-            else:
-                quant_location[quant[0].location_id.id] = quant[1]
+        quant_location = self._group_quants(quants)
         for location_id in quant_location:
             if location_id is not None:
                 move_vals = self._prepare_prev_stock_move_vals(
@@ -144,21 +173,22 @@ class nppMrpProduction(models.Model):
         :return picking_created_ids - list of picking (Stock Operation) ids
         """
         stock_model = self.env['stock.move']
-        keyCache = {}
+        _move_groups = {}
+        # _move_groups = self._group_moves(moves)
         for move in moves:
             # _key = (move.location_id.get_view_location_warehouse(), move.location_dest_id.id)
             _key = (move.location_id.id, move.location_dest_id.id)
-            if _key in keyCache:
-                keyCache[_key].append(move.id)
+            if _key in _move_groups:
+                _move_groups[_key].append(move.id)
             else:
-                keyCache[_key] = [move.id]
+                _move_groups[_key] = [move.id]
         picking_created_ids = []
-        for _key in keyCache:
+        for _key in _move_groups:
             stockPicking = self._create_stock_operation(_key[0], _key[1], production)
             picking_created_ids.append(stockPicking.id)
             [x[1].write({'sequence': x[0]+1, 'picking_id': stockPicking.id})
-             for x in enumerate(stock_model.browse(keyCache[_key]))]
-            stock_model.browse(keyCache[_key]).write({'picking_id': stockPicking.id})
+             for x in enumerate(stock_model.browse(_move_groups[_key]))]
+            stock_model.browse(_move_groups[_key]).write({'picking_id': stockPicking.id})
             stockPicking.action_confirm()
         return picking_created_ids
 
